@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">PointFind</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="greeting">Point in any direction and tap the button below!</string>
+    <string name="action_settings">Settings</string>
+    <string name="buttonText">Tap</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="str_btn_find">Find</string>
+
+    <string-array name="place_type">
+        <item>airport</item>
+        <item>atm</item>
+        <item>bank</item>
+        <item>bus_station</item>
+        <item>church</item>
+        <item>doctor</item>
+        <item>hospital</item>
+        <item>movie_theater</item>
+        <item>restaurant</item>
+    </string-array>
+
+    <string-array name="place_type_name">
+        <item>Airport</item>
+        <item>ATM</item>
+        <item>Bank</item>
+        <item>Bus Station</item>
+        <item>Church</item>
+        <item>Doctor</item>
+        <item>Hospital</item>
+        <item>Movie Theater</item>
+        <item>Restaurant</item>
+    </string-array>
+    <string name="title_activity_marker">MarkerActivity</string>
+
+</resources>
