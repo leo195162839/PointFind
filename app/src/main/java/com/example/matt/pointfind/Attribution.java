@@ -16,7 +16,7 @@ public class Attribution implements Parcelable{
         return 0;
     }
 
-    /** Writing Attribution object data to Parcel */
+    // Writing Attribution object data to Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mHtmlAttribution);
@@ -25,12 +25,12 @@ public class Attribution implements Parcelable{
     public Attribution(){
     }
 
-    /** Initializing Attribution object from Parcel object */
+    // Initializing Attribution object from Parcel object
     private Attribution(Parcel in){
         this.mHtmlAttribution = in.readString();
     }
 
-    /** Generates an instance of Attribution class from Parcel */
+    // Generates an instance of Attribution class from Parcel
     public static final Parcelable.Creator<Attribution> CREATOR = new Parcelable.Creator<Attribution>() {
 
         @Override

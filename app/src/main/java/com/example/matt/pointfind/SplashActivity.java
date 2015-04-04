@@ -11,7 +11,7 @@ import android.content.Intent;
 
 public class SplashActivity extends ActionBarActivity {
 
-    /** Local variables **/
+    /* Local variables */
     private static final String TAG = "SplashActivity";
 
     @Override

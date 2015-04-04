@@ -17,8 +17,7 @@ public class Photo implements Parcelable{
     // Reference of the photo to be used in Google Web Services
     String mPhotoReference="";
 
-    // Attributions of the photo
-    // Attribution is a Parcelable class
+    // Attributions of photo
     Attribution[] mAttributions={};
 
     @Override
@@ -27,7 +26,7 @@ public class Photo implements Parcelable{
         return 0;
     }
 
-    /** Writing Photo object data to Parcel */
+    // Writing Photo object data to Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mWidth);
@@ -39,7 +38,7 @@ public class Photo implements Parcelable{
     public Photo(){
     }
 
-    /** Initializing Photo object from Parcel object */
+    // Initializing Photo object from Parcel object
     private Photo(Parcel in){
         this.mWidth = in.readInt();
         this.mHeight = in.readInt();
@@ -47,7 +46,7 @@ public class Photo implements Parcelable{
         this.mAttributions = (Attribution[])in.readParcelableArray(Attribution.class.getClassLoader());
     }
 
-    /** Generates an instance of Place class from Parcel */
+    // Generates an instance of Place class from Parcel
     public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
         @Override
         public Photo createFromParcel(Parcel source) {

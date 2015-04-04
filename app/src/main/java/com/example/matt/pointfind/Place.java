@@ -21,7 +21,6 @@ public class Place implements Parcelable{
     String mVicinity="";
 
     // Photos of the place
-    // Photo is a Parcelable class
     Photo[] mPhotos={};
 
     @Override
@@ -30,7 +29,7 @@ public class Place implements Parcelable{
         return 0;
     }
 
-    /** Writing Place object data to Parcel */
+    // Writing Place object data to Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mLat);
@@ -43,7 +42,7 @@ public class Place implements Parcelable{
     public Place(){
     }
 
-    /** Initializing Place object from Parcel object */
+    // Initializing Place object from Parcel object
     private Place(Parcel in){
         this.mLat = in.readString();
         this.mLng = in.readString();
@@ -52,7 +51,7 @@ public class Place implements Parcelable{
         this.mPhotos = (Photo[])in.readParcelableArray(Photo.class.getClassLoader());
     }
 
-    /** Generates an instance of Place class from Parcel */
+    // Generates an instance of Place class from Parcel
     public static final Parcelable.Creator<Place> CREATOR = new Parcelable.Creator<Place>(){
         @Override
         public Place createFromParcel(Parcel source) {

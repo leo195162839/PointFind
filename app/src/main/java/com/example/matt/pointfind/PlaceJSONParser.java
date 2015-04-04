@@ -11,19 +11,17 @@ import android.util.Log;
 
 public class PlaceJSONParser {
 
-    /** Receives a JSONObject and returns a list */
+    // Receives a JSONObject and returns a list
     public Place[] parse(JSONObject jObject){
 
         JSONArray jPlaces = null;
         try {
-            /** Retrieves all the elements in the 'places' array */
+            // Retrieves all the elements in the 'places' array
             jPlaces = jObject.getJSONArray("results");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        /** Invoking getPlaces with the array of json object
-         * where each json object represent a place
-         */
+        //Invoking getPlaces with the array of json object where each json object represent a place
         return getPlaces(jPlaces);
     }
 
@@ -31,10 +29,10 @@ public class PlaceJSONParser {
         int placesCount = jPlaces.length();
         Place[] places = new Place[placesCount];
 
-        /** Taking each place, parses and adds to list object */
+        // Taking each place, parses and adds to list object
         for(int i=0; i<placesCount;i++){
             try {
-                /** Call getPlace with place JSON object to parse the place */
+                // Call getPlace with place JSON object to parse the place
                 places[i] = getPlace((JSONObject)jPlaces.get(i));
 
             } catch (JSONException e) {
@@ -44,7 +42,7 @@ public class PlaceJSONParser {
         return places;
     }
 
-    /** Parsing the Place JSON object */
+    // Parsing the Place JSON object
     private Place getPlace(JSONObject jPlace){
 
         Place place = new Place();

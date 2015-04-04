@@ -74,6 +74,8 @@ public class MapActivity extends ActionBarActivity {
     // Specifies the drawMarker() to draw the marker with default color
     private static final float UNDEFINED_COLOR = -1;
 
+    // Array of place
+    String[] placeValue = new String[]{};
 
     //Initialises the mapView
     private void createMapView(){
@@ -200,6 +202,10 @@ public class MapActivity extends ActionBarActivity {
 
                         // Linkng i-th place and its marker id
                         mHMReference.put(m.getId(), mPlaces[i]);
+
+                        //Makeing list
+                        placeValue[placeValue.length] = mPlaces[i].mPlaceName;
+
                     }
                 }
 
@@ -265,6 +271,21 @@ public class MapActivity extends ActionBarActivity {
                     startActivity(intent);
 
                     return false;
+                }
+            });
+
+            // Map Click listener to set new marker
+            googleMap.setOnMapClickListener(new OnMapClickListener() {
+
+                @Override
+                public void onMapClick(LatLng point) {
+
+                    // Clears all the existing markers
+                    googleMap.clear();
+
+                    //draw marker
+                    mLocation = point;
+                    drawMarker(mLocation,BitmapDescriptorFactory.HUE_GREEN,-1);
                 }
             });
         }
@@ -414,6 +435,8 @@ public class MapActivity extends ActionBarActivity {
         // Setting title of the marker
         if (index == 0) {
             markerOptions.title("MyLocation");
+        } else if (index == -1) {
+            markerOptions.title("New Location");
         } else {
             markerOptions.title(mPlaces[index].mPlaceName);
         }
