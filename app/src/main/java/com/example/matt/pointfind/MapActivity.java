@@ -266,6 +266,19 @@ public class MapActivity extends ActionBarActivity {
                         return false;
                     }
 
+                    String title = marker.getTitle();
+
+                    for (int i = 0; i < mPlaces.length; i++) {
+                        //Log.d("MapActivity", String.valueOf(i));
+                        Log.d("MapActivity", "Name is " + mPlaces[i].mPlaceName);
+                        Log.d("MapActivity", "Title is " + marker.getTitle());
+                        if (mPlaces[i].mPlaceName.equals(title)) {
+                            Log.d("MapActivity", "Triggered");
+                            StorePlace.mPlace = mPlaces[i];
+                        }
+
+                    }
+
                     Intent intent = new Intent(MapActivity.this, MarkerActivity.class);
 
                     startActivity(intent);
