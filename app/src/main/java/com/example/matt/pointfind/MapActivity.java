@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -44,11 +45,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends ActionBarActivity {
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+
+public class MapActivity extends ActionBarActivity implements SensorEventListener {
 
     /* Local variables */
+
+    SensorManager sensorManager;
+    float currentDirection = 0f;
+
     // enable google map
     private GoogleMap googleMap;
+
+    //degree of view
+    int range = 30;
+
+    //orientation
+    float orientation;
 
     // Spinner in which the location types are stored
     Spinner mSprPlaceType;
@@ -57,7 +75,7 @@ public class MapActivity extends ActionBarActivity {
     Button mBtnFind=null;
 
     // Stores near by places
-    Place[] mPlaces = null;
+    ArrayList<Place> mPlaces = null;
 
     // A String array containing place types sent to Google Place service
     String[] mPlaceType=null;
@@ -145,6 +163,8 @@ public class MapActivity extends ActionBarActivity {
         createMapView();
         Log.d("MapActivity", "onCreate Triggered");
 
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
 
         // Array of place types
         mPlaceType = getResources().getStringArray(R.array.place_type);
@@ -188,23 +208,23 @@ public class MapActivity extends ActionBarActivity {
                 if (savedInstanceState.containsKey("places")) {
                     Log.d("MapActivity", "Contains place");
                     // Retrieving the array of place objects
-                    mPlaces = (Place[]) savedInstanceState.getParcelableArray("places");
+                    mPlaces = savedInstanceState.getParcelableArrayList("places");
 
                     // Traversing through each near by place object
-                    for (int i = 0; i < mPlaces.length; i++) {
+                    for (int i = 0; i < mPlaces.size(); i++) {
                         //Log.d("MapActivity", String.valueOf(i));
                         // Getting latitude and longitude of the i-th place
-                        LatLng point = new LatLng(Double.parseDouble(mPlaces[i].mLat),
-                                Double.parseDouble(mPlaces[i].mLng));
+                        LatLng point = new LatLng(Double.parseDouble(((Place)mPlaces.get(i)).mLat),
+                                Double.parseDouble(((Place)mPlaces.get(i)).mLng));
 
                         // Drawing the marker corresponding to the i-th place
                         Marker m = drawMarker(point, UNDEFINED_COLOR,i);
 
                         // Linkng i-th place and its marker id
-                        mHMReference.put(m.getId(), mPlaces[i]);
+                        mHMReference.put(m.getId(), (Place)mPlaces.get(i));
 
                         //Makeing list
-                        placeValue[placeValue.length] = mPlaces[i].mPlaceName;
+                        placeValue[placeValue.length] = ((Place)mPlaces.get(i)).mPlaceName;
 
                     }
                 }
@@ -268,13 +288,13 @@ public class MapActivity extends ActionBarActivity {
 
                     String title = marker.getTitle();
 
-                    for (int i = 0; i < mPlaces.length; i++) {
+                    for (int i = 0; i < mPlaces.size(); i++) {
                         //Log.d("MapActivity", String.valueOf(i));
-                        Log.d("MapActivity", "Name is " + mPlaces[i].mPlaceName);
+                        Log.d("MapActivity", "Name is " + mPlaces.get(i).mPlaceName);
                         Log.d("MapActivity", "Title is " + marker.getTitle());
-                        if (mPlaces[i].mPlaceName.equals(title)) {
+                        if (((Place)mPlaces.get(i)).mPlaceName.equals(title)) {
                             Log.d("MapActivity", "Triggered");
-                            StorePlace.mPlace = mPlaces[i];
+                            StorePlace.mPlace = (Place)mPlaces.get(i);
                         }
 
                     }
@@ -311,7 +331,7 @@ public class MapActivity extends ActionBarActivity {
 
         // Saving all the near by places objects
         if(mPlaces!=null) {
-            outState.putParcelableArray("places", mPlaces);
+            outState.putParcelableArrayList("places", mPlaces);
         }
 
         // Saving the touched location
@@ -414,7 +434,7 @@ public class MapActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Place[] places){
 
-            mPlaces = places;
+            mPlaces = new ArrayList<>();
 
             for(int i=0;i< places.length ;i++){
                 Log.d("MapActivity", String.valueOf(i));
@@ -426,13 +446,27 @@ public class MapActivity extends ActionBarActivity {
                 // Getting longitude of the place
                 double lng = Double.parseDouble(place.mLng);
 
-                LatLng latLng = new LatLng(lat, lng);
+                //get direction of point
+                double diffX = lng - mLocation.longitude;
+                double diffY = lat - mLocation.latitude;
+                double direction = Math.atan(diffY/diffX);
+                int degrees = (int) Math.toDegrees(direction);
+                if ((diffX < 0 && diffY > 0) || (diffX < 0 && diffY < 0)) {
+                    degrees += 180;
+                }
+                degrees += 270;
+                degrees = degrees % 360;
 
-                Marker m = drawMarker(latLng,UNDEFINED_COLOR,i);
+                if (degrees > (orientation - range) && degrees < (orientation + range)) {
 
-                // Adding place reference to HashMap with marker id as HashMap key
-                // to get its reference in info window click event listener
-                mHMReference.put(m.getId(), place);
+                    LatLng latLng = new LatLng(lat, lng);
+                    mPlaces.add(place);
+                    Marker m = drawMarker(latLng, UNDEFINED_COLOR, mPlaces.size() - 1);
+
+                    // Adding place reference to HashMap with marker id as HashMap key
+                    // to get its reference in info window click event listener
+                    mHMReference.put(m.getId(), place);
+                }
             }
         }
     }
@@ -451,7 +485,7 @@ public class MapActivity extends ActionBarActivity {
         } else if (index == -1) {
             markerOptions.title("New Location");
         } else {
-            markerOptions.title(mPlaces[index].mPlaceName);
+            markerOptions.title(((Place)mPlaces.get(index)).mPlaceName);
         }
 
         if(color != UNDEFINED_COLOR)
@@ -484,5 +518,33 @@ public class MapActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        orientation = Math.round(event.values[0])*-1 + 360;
+        Log.d("ORTAG", "Current orientation" + orientation);
+
+        //currentDirection = -degree;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor s, int x){
+
+
     }
 }
